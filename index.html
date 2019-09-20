@@ -1,0 +1,113 @@
+<html>
+<head>
+  <title>Express HTML</title>
+  <script>
+    function getTransactions() {
+      userGetTransactionAction();
+    }
+
+    function postTransactions() {
+      const tran = {
+        "data": {
+        "id": "999",
+        "desc": "I am posting tran"
+        }
+      };
+      userPostTransactionsAction(tran);
+    }
+
+    function postTransactionsIdMissingError() {
+      const tran = {
+        "data": {
+        "desc": "I am posting tran with ID MISSING"
+        }
+      };
+      userPostTransactionsAction(tran);
+    }
+
+    function postTransactionsMultiple() {
+      const trans = {
+        "data": [
+          { "id": "1001", "desc": "tran 1" },
+          { "id": "1002", "desc": "tran 2" }
+        ]
+      };
+      userPostTransactionsMultipleAction(trans);
+    }
+
+    function postTransactionsMultipleWithOneError() {
+      const trans = {
+        "data": [
+          { "id": "1010", "desc": "tran 1" },
+          {  "desc": "tran 2 id missing" },
+          { "id": "1012", "desc": "tran 2" }
+        ]
+      };
+      userPostTransactionsMultipleAction(trans);
+    }
+
+    function getMultipleRequestUsingPromiseAll() {
+      userGetUserAndBookAction();
+    }
+
+    // calling helpers fns
+    const userGetTransactionAction = async () => {
+      // Same ORIGIN
+        const response = await fetch('http://localhost:4000/retrieve/transactions');
+        const myJson = await response.json(); //extract JSON from the http response
+        document.getElementById('result').innerHTML = JSON.stringify(myJson);
+    }
+
+    const userPostTransactionsAction = async (data) => {
+      // Same ORIGIN
+        const response = await fetch('http://localhost:4000/save/transactions', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        const myJson = await response.json(); //extract JSON from the http response
+        document.getElementById('result').innerHTML = JSON.stringify(myJson);
+    }
+
+    const userPostTransactionsMultipleAction = async (data) => {
+      // Same ORIGIN
+        const response = await fetch('http://localhost:4000/save/transactions/multiple', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        const myJson = await response.json(); //extract JSON from the http response
+        document.getElementById('result').innerHTML = JSON.stringify(myJson);
+    }
+
+    const userGetUserAndBookAction = async () => {
+      // Same ORIGIN
+      const response = await fetch('http://localhost:4000/retrieve/users/24/books');
+      const myJson = await response.json(); //extract JSON from the http response
+      document.getElementById('result').innerHTML = JSON.stringify(myJson);
+
+    }
+  </script>
+ </head>
+<body>
+  <div>
+    <h2>API test using axios</h2>
+    <hr />
+    <button onclick="getTransactions()">GET Transactions</button>
+    <button onclick="postTransactions()">POST Transactions (1 tran)</button>
+    <button onclick="postTransactionsMultiple()">POST Transactions (array of trans)</button>
+    <hr />
+    <button onclick="postTransactionsIdMissingError()">POST Transactions with error (1 tran)</button>
+    <button onclick="postTransactionsMultipleWithOneError()">POST Transactions (array of trans-with one error)</button>
+    <hr />
+    <button onclick="getMultipleRequestUsingPromiseAll()">GET with axios.all / promise.all (2 users and books)</button>
+    <hr />
+    <div>Result:</div>
+    <div id="result">...</div>
+  </div>
+</body>
+</html>
